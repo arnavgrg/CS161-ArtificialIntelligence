@@ -9,6 +9,7 @@ Test Cases:
     (print (TREE-CONTAINS 4 '((1 2 3) 7 8))) -> Nil
     (print (TREE-CONTAINS 6 '((1 2 3) 6 (7 8)))) -> T
 |#
+
 (defun TREE-CONTAINS (N TREE)
     (cond
         ((null TREE) nil)
@@ -36,6 +37,7 @@ Test Cases:
     (print (TREE-MIN '((1 2 3) 7 8))) -> 1
     (print (TREE-MIN '(((1) 2 3) 7 8))) -> 1
 |#
+
 (defun TREE-MIN (TREE)
     (cond 
         ((null TREE) nil)
@@ -44,6 +46,7 @@ Test Cases:
     )
 )
 
+(TERPRI)
 (print (TREE-MIN '(2 3 (4 5 7 8))))
 (print (TREE-MIN '((1 2 3) 7 8)))
 (print (TREE-MIN '(((1) 2 3) 7 8)))
@@ -62,6 +65,7 @@ Test Cases:
     (print (TREE-ORDER '((1 2 3) 7 8))) -> (7 2 1 3 8)
     (print (TREE-ORDER '((1 2 3) 6 ((8 9 10) 11 12)))) -> (6 2 1 3 11 9 8 10 12)
 |#
+
 (defun TREE-ORDER (TREE)
     (cond 
         ((null TREE) nil)
@@ -71,6 +75,7 @@ Test Cases:
     )
 )
 
+(TERPRI)
 (print (TREE-ORDER 3))
 (print (TREE-ORDER '((1 2 3) 7 8)))
 (print (TREE-ORDER '((1 2 3) 6 ((8 9 10) 11 12))))
@@ -93,9 +98,11 @@ Test Cases:
         ((null L) nil)
         ((not (eql START 0)) (SUB-LIST (cdr L) (- START 1) LEN))
         ((not (eql LEN 0)) (cons (car L) (SUB-LIST (cdr L) START (- LEN 1))))
+        (t ())
     )
 )
 
+(TERPRI)
 (print (SUB-LIST '(a b c d) 0 3))
 (print (SUB-LIST '(a b c d) 3 1))
 (print (SUB-LIST '(a b c d) 2 0))
@@ -103,7 +110,32 @@ Test Cases:
 
 ;-------------------------------------------------------------------------------
 
-(defun SPLIT-LIST (L))
+#|Q5.
+If we get the length of the list, we get two scenarios: even length or odd length
+Even Length: Split the list from 0 to len/2 and len/2 to len
+Odd Length: Split the list from 0 to (len+1)/2 and (len+1)/2 to len.
+Test Cases:
+    (print (SPLIT-LIST '(a b c d))) -> ((a b) (c d))
+    (print (SPLIT-LIST '(a b c d e))) -> ((a b c) (d e))
+    (print (SPLIT-LIST '(a b c d e f))) -> ((a b c) (d e f))
+|#
+
+(defun SPLIT-LIST (L)
+    (let ((x (length L)))
+        (cond 
+            ((evenp x) (list (SUB-LIST L 0 (/ x 2)) (SUB-LIST L (/ x 2) x)))
+            ((oddp x) (list (SUB-LIST L 0 (/ (+ x 1) 2)) (SUB-LIST L (/ (+ x 1) 2) x)))
+        )
+    )
+)
+
+(TERPRI)
+(print (SPLIT-LIST '(a b c d)))
+(print (SPLIT-LIST '(a b c d e)))
+(print (SPLIT-LIST '(a b c d e f)))
+
+;-------------------------------------------------------------------------------
+
 (defun BTREE-HEIGHT (TREE))
 (defun LIST2BTREE (LEAVES))
 (defun BTREE2LIST (TREE))
