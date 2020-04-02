@@ -78,12 +78,30 @@ Test Cases:
 ;-------------------------------------------------------------------------------
 
 #|Q4.
-
+Since we need to manipulate a single list, we must the property of cons, that is,
+conditions are executed in sequence. Therefore, we can incrementally remove elements
+from the list until we hit the start index. From there, we can move on to the next
+conditional and incrementally build a list of elements of length len and return that.
+Test Cases:
+    (print (SUB-LIST '(a b c d) 0 3)) -> (a b c)
+    (print (SUB-LIST '(a b c d) 3 1)) -> (d)
+    (print (SUB-LIST '(a b c d) 2 0)) -> nil
+    (print (SUB-LIST '(a b c d e f g) 2 3)) -> (c d e)
 |#
 (defun SUB-LIST (L START LEN)
-
+    (cond 
+        ((null L) nil)
+        ((not (eql START 0)) (SUB-LIST (cdr L) (- START 1) LEN))
+        ((not (eql LEN 0)) (cons (car L) (SUB-LIST (cdr L) START (- LEN 1))))
+    )
 )
 
+(print (SUB-LIST '(a b c d) 0 3))
+(print (SUB-LIST '(a b c d) 3 1))
+(print (SUB-LIST '(a b c d) 2 0))
+(print (SUB-LIST '(a b c d e f g) 2 3))
+
+;-------------------------------------------------------------------------------
 
 (defun SPLIT-LIST (L))
 (defun BTREE-HEIGHT (TREE))
