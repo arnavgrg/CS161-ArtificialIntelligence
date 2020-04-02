@@ -93,6 +93,7 @@ Test Cases:
     (print (SUB-LIST '(a b c d) 2 0)) -> nil
     (print (SUB-LIST '(a b c d e f g) 2 3)) -> (c d e)
 |#
+
 (defun SUB-LIST (L START LEN)
     (cond 
         ((null L) nil)
@@ -136,7 +137,34 @@ Test Cases:
 
 ;-------------------------------------------------------------------------------
 
-(defun BTREE-HEIGHT (TREE))
+#|Q6. 
+
+|#
+
+(defun BTREE-HEIGHT (TREE)
+    (cond 
+        ((null TREE) 0)
+        ((atom TREE) 0)
+        ((eql (length TREE) 1) 1)
+        (t (let 
+                ((L (BTREE-HEIGHT (car TREE)))
+                 (R (BTREE-HEIGHT (cdr TREE))))
+                (if (> L R) (+ 1 L) (+ 1 R))
+           )
+        )
+    )
+)
+
+(TERPRI)
+(print (BTREE-HEIGHT 1))
+(print (BTREE-HEIGHT '(1 2)))
+(print (BTREE-HEIGHT '(1 (2 3))))
+(print (BTREE-HEIGHT '((1 2) (3 4))))
+(print (BTREE-HEIGHT '((1 (2 3)) ((4 5) (6 7)))))
+(print (BTREE-HEIGHT '(((1 2) (3 4)) ((5 6) (7 8)))))
+
+;-------------------------------------------------------------------------------
+
 (defun LIST2BTREE (LEAVES))
 (defun BTREE2LIST (TREE))
 (defun IS-SAME (E1 E2))
