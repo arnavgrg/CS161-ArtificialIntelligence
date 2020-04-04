@@ -160,10 +160,10 @@ Test Cases:
     (cond 
         ((null TREE) 0)
         ((atom TREE) 0)
-        ((= (length TREE) 1) 1)
         (t (let 
                 ((L (BTREE-HEIGHT (first TREE)))
                  (R (BTREE-HEIGHT (second TREE))))
+                ; Effectively works as finding the max
                 (cond 
                     ((> R L) (+ 1 R))
                     (t (+ 1 L))
@@ -184,11 +184,39 @@ Test Cases:
 ;-------------------------------------------------------------------------------
 
 #|Q7.
-
+Call SPLIT-LIST on LEAVES to get two sublists, and recursively repeat this. 
+Eventually, we hit a case where either LEAVES has a length of 2, e.g (1 2), 
+in which case we know that this is an internal node and we can return it as is. 
+On the other hand, if the length of the list is 1, e.g. (3), then we know the 
+atom inside it is an leaf node, so we can extract it from the list. Finally, 
+we must incrementally build a list that represents a BTREE, which can be done 
+by merging the two return values we get from the recursive subcalls.
+Test Cases:
+    (LIST2BTREE '(1)) -> 1
+    (LIST2BTREE '(1 2)) -> (1 2)
+    (LIST2BTREE '(1 2 3)) -> ((1 2) 3)
+    (LIST2BTREE '(1 2 3 4)) -> ((1 2) (3 4))
+    (LIST2BTREE '(1 2 3 4 5)) -> (((1 2) 3) (4 5))
+    (LIST2BTREE '(1 2 3 4 5 6 7)) -> (((1 2) (3 4)) ((5 6) 7))
+    (LIST2BTREE '(1 2 3 4 5 6 7 8)) -> (((1 2) (3 4)) ((5 6) (7 8)))
 |#
 (defun LIST2BTREE (LEAVES)
-
+    (cond 
+        ((= (length LEAVES) 1) (first LEAVES))
+        ((= (length LEAVES) 2) LEAVES)
+        (t (let ((x (SPLIT-LIST LEAVES)))
+            (list (LIST2BTREE (first x)) (LIST2BTREE (second x)))
+        ))
+    )
 )
+
+(print (LIST2BTREE '(1)))
+(print (LIST2BTREE '(1 2)))
+(print (LIST2BTREE '(1 2 3)))
+(print (LIST2BTREE '(1 2 3 4)))
+(print (LIST2BTREE '(1 2 3 4 5)))
+(print (LIST2BTREE '(1 2 3 4 5 6 7)))
+(print (LIST2BTREE '(1 2 3 4 5 6 7 8)))
 
 ;-------------------------------------------------------------------------------
 
