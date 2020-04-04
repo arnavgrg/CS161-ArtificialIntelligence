@@ -131,6 +131,8 @@ Test Cases:
 )
 
 (TERPRI)
+(print (SPLIT-LIST '()))
+(print (SPLIT-LIST '(a)))
 (print (SPLIT-LIST '(a b c d)))
 (print (SPLIT-LIST '(a b c d e)))
 (print (SPLIT-LIST '(a b c d e f)))
@@ -138,6 +140,13 @@ Test Cases:
 ;-------------------------------------------------------------------------------
 
 #|Q6.
+This works like the classic algorithm to find the height of a binary tree, where
+we keep recursing on the left and the right branches and add 1 to the max of the
+heights returned from them, that is:
+     (a) Return max depth of left subtree recursively
+     (a) Return max depth of right subtree recursively
+     (c) Find max of left/right max depths and add 1 to it for the current node.
+         max_depth = 1 + max(max dept of left subtree, max depth of right subtree) 
 Test Cases:
     (print (BTREE-HEIGHT 1)) -> 0
     (print (BTREE-HEIGHT '(1 2))) -> 1
@@ -153,9 +162,12 @@ Test Cases:
         ((atom TREE) 0)
         ((= (length TREE) 1) 1)
         (t (let 
-                ((L (BTREE-HEIGHT (car TREE)))
-                 (R (BTREE-HEIGHT (cdr TREE))))
-                (if (> L R) (+ 1 L) (+ 1 R))
+                ((L (BTREE-HEIGHT (first TREE)))
+                 (R (BTREE-HEIGHT (second TREE))))
+                (cond 
+                    ((> R L) (+ 1 R))
+                    (t (+ 1 L))
+                )
            )
         )
     )
