@@ -13,8 +13,8 @@ Test Cases:
 (defun TREE-CONTAINS (N TREE)
     (cond
         ((null TREE) nil)
-        ((atom TREE) (eql N TREE))
-        ((eql N (second TREE)) t)
+        ((atom TREE) (= N TREE))
+        ((= N (second TREE)) t)
         ((> N (second TREE)) (TREE-CONTAINS N (third TREE)))
         ((< N (second TREE)) (TREE-CONTAINS N (first TREE)))
     )
@@ -97,8 +97,8 @@ Test Cases:
 (defun SUB-LIST (L START LEN)
     (cond 
         ((null L) nil)
-        ((not (eql START 0)) (SUB-LIST (cdr L) (- START 1) LEN))
-        ((not (eql LEN 0)) (cons (car L) (SUB-LIST (cdr L) START (- LEN 1))))
+        ((not (= START 0)) (SUB-LIST (cdr L) (- START 1) LEN))
+        ((not (= LEN 0)) (cons (car L) (SUB-LIST (cdr L) START (- LEN 1))))
         (t ())
     )
 )
@@ -137,15 +137,21 @@ Test Cases:
 
 ;-------------------------------------------------------------------------------
 
-#|Q6. 
-
+#|Q6.
+Test Cases:
+    (print (BTREE-HEIGHT 1)) -> 0
+    (print (BTREE-HEIGHT '(1 2))) -> 1
+    (print (BTREE-HEIGHT '(1 (2 3)))) -> 2
+    (print (BTREE-HEIGHT '((1 2) (3 4)))) -> 2
+    (print (BTREE-HEIGHT '((1 (2 3)) ((4 5) (6 7))))) -> 3
+    (print (BTREE-HEIGHT '(((1 2) (3 4)) ((5 6) (7 8))))) -> 3
 |#
 
 (defun BTREE-HEIGHT (TREE)
     (cond 
         ((null TREE) 0)
         ((atom TREE) 0)
-        ((eql (length TREE) 1) 1)
+        ((= (length TREE) 1) 1)
         (t (let 
                 ((L (BTREE-HEIGHT (car TREE)))
                  (R (BTREE-HEIGHT (cdr TREE))))
@@ -164,6 +170,7 @@ Test Cases:
 (print (BTREE-HEIGHT '(((1 2) (3 4)) ((5 6) (7 8)))))
 
 ;-------------------------------------------------------------------------------
+
 
 (defun LIST2BTREE (LEAVES))
 (defun BTREE2LIST (TREE))
