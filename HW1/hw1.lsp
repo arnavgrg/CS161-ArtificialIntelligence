@@ -20,11 +20,10 @@ Test Cases:
     )
 )
 
-(print (TREE-CONTAINS 5 12))
-(print (TREE-CONTAINS 3 '((1 2 3) 7 8)))
-(print (TREE-CONTAINS 4 '((1 2 3) 7 8)))
-(print (TREE-CONTAINS 6 '((1 2 3) 6 (7 8))))
-
+;; (print (TREE-CONTAINS 5 12))
+;; (print (TREE-CONTAINS 3 '((1 2 3) 7 8)))
+;; (print (TREE-CONTAINS 4 '((1 2 3) 7 8)))
+;; (print (TREE-CONTAINS 6 '((1 2 3) 6 (7 8))))
 ;-------------------------------------------------------------------------------
 
 #|Q2.
@@ -46,10 +45,10 @@ Test Cases:
     )
 )
 
-(TERPRI)
-(print (TREE-MIN '(2 3 (4 5 7 8))))
-(print (TREE-MIN '((1 2 3) 7 8)))
-(print (TREE-MIN '(((1) 2 3) 7 8)))
+;; (TERPRI)
+;; (print (TREE-MIN '(2 3 (4 5 7 8))))
+;; (print (TREE-MIN '((1 2 3) 7 8)))
+;; (print (TREE-MIN '(((1) 2 3) 7 8)))
 
 ;-------------------------------------------------------------------------------
 
@@ -75,10 +74,10 @@ Test Cases:
     )
 )
 
-(TERPRI)
-(print (TREE-ORDER 3))
-(print (TREE-ORDER '((1 2 3) 7 8)))
-(print (TREE-ORDER '((1 2 3) 6 ((8 9 10) 11 12))))
+;; (TERPRI)
+;; (print (TREE-ORDER 3))
+;; (print (TREE-ORDER '((1 2 3) 7 8)))
+;; (print (TREE-ORDER '((1 2 3) 6 ((8 9 10) 11 12))))
 
 ;-------------------------------------------------------------------------------
 
@@ -103,11 +102,11 @@ Test Cases:
     )
 )
 
-(TERPRI)
-(print (SUB-LIST '(a b c d) 0 3))
-(print (SUB-LIST '(a b c d) 3 1))
-(print (SUB-LIST '(a b c d) 2 0))
-(print (SUB-LIST '(a b c d e f g) 2 3))
+;; (TERPRI)
+;; (print (SUB-LIST '(a b c d) 0 3))
+;; (print (SUB-LIST '(a b c d) 3 1))
+;; (print (SUB-LIST '(a b c d) 2 0))
+;; (print (SUB-LIST '(a b c d e f g) 2 3))
 
 ;-------------------------------------------------------------------------------
 
@@ -130,12 +129,12 @@ Test Cases:
     )
 )
 
-(TERPRI)
-(print (SPLIT-LIST '()))
-(print (SPLIT-LIST '(a)))
-(print (SPLIT-LIST '(a b c d)))
-(print (SPLIT-LIST '(a b c d e)))
-(print (SPLIT-LIST '(a b c d e f)))
+;; (TERPRI)
+;; (print (SPLIT-LIST '()))
+;; (print (SPLIT-LIST '(a)))
+;; (print (SPLIT-LIST '(a b c d)))
+;; (print (SPLIT-LIST '(a b c d e)))
+;; (print (SPLIT-LIST '(a b c d e f)))
 
 ;-------------------------------------------------------------------------------
 
@@ -173,13 +172,13 @@ Test Cases:
     )
 )
 
-(TERPRI)
-(print (BTREE-HEIGHT 1))
-(print (BTREE-HEIGHT '(1 2)))
-(print (BTREE-HEIGHT '(1 (2 3))))
-(print (BTREE-HEIGHT '((1 2) (3 4))))
-(print (BTREE-HEIGHT '((1 (2 3)) ((4 5) (6 7)))))
-(print (BTREE-HEIGHT '(((1 2) (3 4)) ((5 6) (7 8)))))
+;; (TERPRI)
+;; (print (BTREE-HEIGHT 1))
+;; (print (BTREE-HEIGHT '(1 2)))
+;; (print (BTREE-HEIGHT '(1 (2 3))))
+;; (print (BTREE-HEIGHT '((1 2) (3 4))))
+;; (print (BTREE-HEIGHT '((1 (2 3)) ((4 5) (6 7)))))
+;; (print (BTREE-HEIGHT '(((1 2) (3 4)) ((5 6) (7 8)))))
 
 ;-------------------------------------------------------------------------------
 
@@ -200,6 +199,7 @@ Test Cases:
     (LIST2BTREE '(1 2 3 4 5 6 7)) -> (((1 2) (3 4)) ((5 6) 7))
     (LIST2BTREE '(1 2 3 4 5 6 7 8)) -> (((1 2) (3 4)) ((5 6) (7 8)))
 |#
+
 (defun LIST2BTREE (LEAVES)
     (cond 
         ((= (length LEAVES) 1) (first LEAVES))
@@ -210,15 +210,86 @@ Test Cases:
     )
 )
 
-(print (LIST2BTREE '(1)))
-(print (LIST2BTREE '(1 2)))
-(print (LIST2BTREE '(1 2 3)))
-(print (LIST2BTREE '(1 2 3 4)))
-(print (LIST2BTREE '(1 2 3 4 5)))
-(print (LIST2BTREE '(1 2 3 4 5 6 7)))
-(print (LIST2BTREE '(1 2 3 4 5 6 7 8)))
+;; (TERPRI)
+;; (print (LIST2BTREE '(1)))
+;; (print (LIST2BTREE '(1 2)))
+;; (print (LIST2BTREE '(1 2 3)))
+;; (print (LIST2BTREE '(1 2 3 4)))
+;; (print (LIST2BTREE '(1 2 3 4 5)))
+;; (print (LIST2BTREE '(1 2 3 4 5 6 7)))
+;; (print (LIST2BTREE '(1 2 3 4 5 6 7 8)))
 
 ;-------------------------------------------------------------------------------
 
-(defun BTREE2LIST (TREE))
-(defun IS-SAME (E1 E2))
+#|Q8. 
+Simple list creation. Recursively traverse the left and right parts of the binary
+tree until we hit the leaf nodes, then just append the leaf nodes to the same list,
+thereby building the list incrementally.
+Test Cases:
+    (BTREE2LIST 1) -> (1)
+    (BTREE2LIST '(1 2)) -> (1 2)
+    (BTREE2LIST '((1 2) 3)) -> (1 2 3)
+    (BTREE2LIST '((1 2) (3 4))) -> (1 2 3 4)
+    (BTREE2LIST '(((1 2) (3 4)) ((5 6) 7))) -> (1 2 3 4 5 6 7)
+    (BTREE2LIST '(((1 2) (3 4)) ((5 6) (7 8)))) -> (1 2 3 4 5 6 7 8)
+Additional test cases:
+    (BTREE2LIST (LIST2BTREE '(1 2 3 4 5))) -> (1 2 3 4 5)
+    (BTREE2LIST (LIST2BTREE '(1 2 3 4 5 6 7 8))) -> (1 2 3 4 5 6 7 8)
+|#
+
+(defun BTREE2LIST (TREE)
+    (cond 
+        ((atom TREE) (list TREE))
+        (t (append (BTREE2LIST (first TREE)) (BTREE2LIST (second TREE))))
+    )
+)
+
+;; (TERPRI)
+;; (print (BTREE2LIST 1))
+;; (print (BTREE2LIST '(1 2)))
+;; (print (BTREE2LIST '((1 2) 3)))
+;; (print (BTREE2LIST '((1 2) (3 4))))
+;; (print (BTREE2LIST '(((1 2) (3 4)) ((5 6) 7))))
+;; (print (BTREE2LIST '(((1 2) (3 4)) ((5 6) (7 8)))))
+
+;; (TERPRI)
+;; (print (BTREE2LIST (LIST2BTREE '(1 2 3 4 5))))
+;; (print (BTREE2LIST (LIST2BTREE '(1 2 3 4 5 6 7 8))))
+
+;-------------------------------------------------------------------------------
+
+#|Q9.
+We need to check for 3 cases: nulls, atoms and lists.
+- Nulls: Both must be null at the same time.
+- Atoms: if atom E1 and E2 are both atoms, then compare them. Return nil if not equal.
+If it is neither of the above, then it must be a list. So just recursively call the
+function on the first element (can itself be null, atom or a nested list) and the
+remainder of the list.
+Test Cases:
+    (print (IS-SAME '() '())) -> T
+    (print (IS-SAME '2 '3)) -> Nil
+    (print (IS-SAME '(2 3) '3)) -> Nil
+    (print (IS-SAME '((1 2 3) 7 8) '((1 2 3) 7 8))) -> T
+    (print (IS-SAME '(1 2 3 7 8) '((1 2 3) 7 8))) -> Nil
+    (print (IS-SAME '(1 2 3 7 8) '(1 2 3 7 8))) -> T
+|#
+
+(defun IS-SAME (E1 E2)
+    (cond 
+        ((null E1) (if (null E2) t nil))
+        ((atom E1) (if (atom E2) (= E1 E2) nil))
+        ((atom E2) (if (atom E1) (= E1 E2) nil))
+        (t (and 
+            (IS-SAME (first E1) (first E2))
+            (IS-SAME (rest E1) (rest E2))
+        ))
+    )
+)
+
+;; (TERPRI)
+;; (print (IS-SAME '() '()))
+;; (print (IS-SAME '2 '3))
+;; (print (IS-SAME '(2 3) '3))
+;; (print (IS-SAME '((1 2 3) 7 8) '((1 2 3) 7 8)))
+;; (print (IS-SAME '(1 2 3 7 8) '((1 2 3) 7 8)))
+;; (print (IS-SAME '(1 2 3 7 8) '(1 2 3 7 8)))
