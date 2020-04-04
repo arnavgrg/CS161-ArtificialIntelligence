@@ -259,7 +259,7 @@ Additional test cases:
 ;-------------------------------------------------------------------------------
 
 #|Q9.
-We need to check for 3 cases: nulls, atoms and lists.
+We need to check for 3 cases: nulls (invalid inputs), atoms and lists.
 - Nulls: Both must be null at the same time.
 - Atoms: if atom E1 and E2 are both atoms, then compare them. Return nil if not equal.
 If it is neither of the above, then it must be a list. So just recursively call the
