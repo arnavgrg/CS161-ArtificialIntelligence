@@ -20,10 +20,6 @@ Test Cases:
     )
 )
 
-;; (print (TREE-CONTAINS 5 12))
-;; (print (TREE-CONTAINS 3 '((1 2 3) 7 8)))
-;; (print (TREE-CONTAINS 4 '((1 2 3) 7 8)))
-;; (print (TREE-CONTAINS 6 '((1 2 3) 6 (7 8))))
 ;-------------------------------------------------------------------------------
 
 #|Q2.
@@ -44,11 +40,6 @@ Test Cases:
         (t (TREE-MIN (car TREE)))
     )
 )
-
-;; (TERPRI)
-;; (print (TREE-MIN '(2 3 (4 5 7 8))))
-;; (print (TREE-MIN '((1 2 3) 7 8)))
-;; (print (TREE-MIN '(((1) 2 3) 7 8)))
 
 ;-------------------------------------------------------------------------------
 
@@ -74,11 +65,6 @@ Test Cases:
     )
 )
 
-;; (TERPRI)
-;; (print (TREE-ORDER 3))
-;; (print (TREE-ORDER '((1 2 3) 7 8)))
-;; (print (TREE-ORDER '((1 2 3) 6 ((8 9 10) 11 12))))
-
 ;-------------------------------------------------------------------------------
 
 #|Q4.
@@ -102,12 +88,6 @@ Test Cases:
     )
 )
 
-;; (TERPRI)
-;; (print (SUB-LIST '(a b c d) 0 3))
-;; (print (SUB-LIST '(a b c d) 3 1))
-;; (print (SUB-LIST '(a b c d) 2 0))
-;; (print (SUB-LIST '(a b c d e f g) 2 3))
-
 ;-------------------------------------------------------------------------------
 
 #|Q5.
@@ -128,13 +108,6 @@ Test Cases:
         )
     )
 )
-
-;; (TERPRI)
-;; (print (SPLIT-LIST '()))
-;; (print (SPLIT-LIST '(a)))
-;; (print (SPLIT-LIST '(a b c d)))
-;; (print (SPLIT-LIST '(a b c d e)))
-;; (print (SPLIT-LIST '(a b c d e f)))
 
 ;-------------------------------------------------------------------------------
 
@@ -172,14 +145,6 @@ Test Cases:
     )
 )
 
-;; (TERPRI)
-;; (print (BTREE-HEIGHT 1))
-;; (print (BTREE-HEIGHT '(1 2)))
-;; (print (BTREE-HEIGHT '(1 (2 3))))
-;; (print (BTREE-HEIGHT '((1 2) (3 4))))
-;; (print (BTREE-HEIGHT '((1 (2 3)) ((4 5) (6 7)))))
-;; (print (BTREE-HEIGHT '(((1 2) (3 4)) ((5 6) (7 8)))))
-
 ;-------------------------------------------------------------------------------
 
 #|Q7.
@@ -210,15 +175,6 @@ Test Cases:
     )
 )
 
-;; (TERPRI)
-;; (print (LIST2BTREE '(1)))
-;; (print (LIST2BTREE '(1 2)))
-;; (print (LIST2BTREE '(1 2 3)))
-;; (print (LIST2BTREE '(1 2 3 4)))
-;; (print (LIST2BTREE '(1 2 3 4 5)))
-;; (print (LIST2BTREE '(1 2 3 4 5 6 7)))
-;; (print (LIST2BTREE '(1 2 3 4 5 6 7 8)))
-
 ;-------------------------------------------------------------------------------
 
 #|Q8. 
@@ -243,18 +199,6 @@ Additional test cases:
         (t (append (BTREE2LIST (first TREE)) (BTREE2LIST (second TREE))))
     )
 )
-
-;; (TERPRI)
-;; (print (BTREE2LIST 1))
-;; (print (BTREE2LIST '(1 2)))
-;; (print (BTREE2LIST '((1 2) 3)))
-;; (print (BTREE2LIST '((1 2) (3 4))))
-;; (print (BTREE2LIST '(((1 2) (3 4)) ((5 6) 7))))
-;; (print (BTREE2LIST '(((1 2) (3 4)) ((5 6) (7 8)))))
-
-;; (TERPRI)
-;; (print (BTREE2LIST (LIST2BTREE '(1 2 3 4 5))))
-;; (print (BTREE2LIST (LIST2BTREE '(1 2 3 4 5 6 7 8))))
 
 ;-------------------------------------------------------------------------------
 
@@ -285,11 +229,3 @@ Test Cases:
         ))
     )
 )
-
-;; (TERPRI)
-;; (print (IS-SAME '() '()))
-;; (print (IS-SAME '2 '3))
-;; (print (IS-SAME '(2 3) '3))
-;; (print (IS-SAME '((1 2 3) 7 8) '((1 2 3) 7 8)))
-;; (print (IS-SAME '(1 2 3 7 8) '((1 2 3) 7 8)))
-;; (print (IS-SAME '(1 2 3 7 8) '(1 2 3 7 8)))
