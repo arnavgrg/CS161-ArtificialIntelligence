@@ -15,7 +15,7 @@
     (cond 
         ((null TREE) nil)
         ((atom (first TREE)) (append (list (first TREE)) (BFS (rest TREE))))
-        (t (BFS (append (rest TREE) (first TREE)) ))
+        (t (BFS (append (rest TREE) (first TREE))))
     )
 )
 
@@ -25,7 +25,7 @@
 
 ; --------------------------------------------------------------------------
 
-;DFS 
+; Q2: DFS
 (defun DFS (TREE)
     (cond
         ((null TREE) nil)
@@ -40,21 +40,21 @@
 
 ; ----------------------------------------------------------------------------
 
-(defun DFID-L (TREE DEPTH)
+(defun DFID-D (TREE DEPTH)
     (cond 
         ((null TREE) nil)
         ((atom TREE) (list TREE))
         ((= DEPTH 0) nil)
-        (t (append (DFID-L (first TREE) (- DEPTH 1))
-                   (DFID-L (rest TREE) DEPTH)))
+        (t (append (DFID-D (first TREE) (- DEPTH 1))
+                   (DFID-D (rest TREE) DEPTH)))
     )
 )
 
-;DFID
+; Q3 - DFID
 (defun DFID (TREE DEPTH)
     (cond 
         ((= DEPTH 0) nil)
-        (t (append (DFID TREE (- DEPTH 1)) (DFID-L TREE DEPTH)))
+        (t (append (DFID TREE (- DEPTH 1)) (DFID-D TREE DEPTH)))
     )
 )
 
@@ -112,21 +112,58 @@
 ; NOTE that next-state returns a list containing the successor state (which is
 ; itself a list); the return should look something like ((1 1 T)).
 (defun next-state (s m c)
-  ...)
+    (let ((missionaries (first s)) 
+          (cannibals (second s))
+          (state (third s)))
+         (cond 
+              ; If more missionaries or cannibals than we can move in one go, ret nil
+              ((or (> c cannibals) (> m missionaries)) nil)
+              ; Make sure missionaries > cannibals on either side after move
+              ; Edge case: if cannibals > missionaries on one side, then missionaries 
+              ; must be 0 on other side for state to still be valid.
+              (t (let*  
+                    ((rem_missionaries (- missionaries m))
+                     (rem_cannibals (- cannibals c))
+                     (new_missionaries (- 3 rem_missionaries))
+                     (new_cannibals (- 3 rem_cannibals)))
+                    (cond
+                        ((and
+                            (or (> rem_cannibals rem_missionaries) (> new_cannibals new_missionaries))
+                            (not (or (= rem_missionaries 0) (= new_missionaries 0)))
+                         ) nil)
+                        (t (list (list new_missionaries new_cannibals (not state))))
+                    )
+                 )
+              )
+         )
+    )
+)
 
 ; SUCC-FN returns all of the possible legal successor states to the current
 ; state. It takes a single argument (s), which encodes the current state, and
 ; returns a list of each state that can be reached by applying legal operators
 ; to the current state.
 (defun succ-fn (s)
-  ...)
+    (append
+        (next-state s 1 0)
+        (next-state s 0 1)
+        (next-state s 1 1)
+        (next-state s 2 0)
+        (next-state s 0 2)
+    )
+)
 
 ; ON-PATH checks whether the current state is on the stack of states visited by
 ; this depth-first search. It takes two arguments: the current state (s) and the
 ; stack of states visited by MC-DFS (states). It returns T if s is a member of
 ; states and NIL otherwise.
 (defun on-path (s states)
-  ...)
+    (cond 
+        ((null states) nil)
+        ((equal s (car states)) t)
+        (t (on-path s (cdr states)))
+    )
+)
 
 ; MULT-DFS is a helper function for MC-DFS. It takes two arguments: a stack of
 ; states from the initial state to the current state (path), and the legal
@@ -136,8 +173,7 @@
 ; complete path from the initial state to the goal state. Otherwise, it returns
 ; NIL. 
 ; Note that the path should be ordered as: (S_n ... S_2 S_1 S_0)
-(defun mult-dfs (states path)
-  ...)
+(defun mult-dfs (states path))
 
 ; MC-DFS does a depth first search from a given state to the goal state. It
 ; takes two arguments: a state (S) and the path from the initial state to S
@@ -147,8 +183,7 @@
 ; responsible for checking if S is already the goal state, as well as for
 ; ensuring that the depth-first search does not revisit a node already on the
 ; search path.
-(defun mc-dfs (s path)
-  ...)
+(defun mc-dfs (s path))
 
 ; Function execution examples
 
@@ -166,3 +201,8 @@
 ; (succ-fn '(3 3 t)) -> ((0 1 NIL) (1 1 NIL) (0 2 NIL))
 ; (succ-fn '(1 1 t)) -> ((3 2 NIL) (3 3 NIL))
 
+(TERPRI)
+(print (next-state '(3 3 t) 0 1))
+(print (succ-fn '(3 3 t)))
+(print (succ-fn '(1 1 t)))
+(print (mc-dfs '(3 3 t) nil))
