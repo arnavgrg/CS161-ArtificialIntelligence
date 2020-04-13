@@ -3,12 +3,14 @@
     1. If the head of the queue is an atom, then append it to the list
         and recurse on the rest.
     2. If the head of the queue is a list, then we want to expand the 
-        node and append the children to the end of the queue. Then, 
-        recurse on this new list.
+        internal node and append the children to the end of the queue. 
+        Then, recurse on this modified list.
     Test Cases:
-        (print (BFS '((x y)(z a))))
-        (print (BFS '((a (b)) c (d))))
+        (BFS '((x y)(z a)))) -> (X Y Z A)
+        (BFS '((a (b)) c (d)))) -> (C A D B)
+        (BFS '(((1 2) (3 4)) ((5 6) (7 8))))) -> (1 2 3 4 5 6 7 8)
 |#
+
 (defun BFS (TREE)
     (cond 
         ((null TREE) nil)
@@ -19,20 +21,33 @@
 
 (print (BFS '((x y)(z a))))
 (print (BFS '((a (b)) c (d))))
+(print (BFS '(((1 2) (3 4)) ((5 6) (7 8)))))
 
 ; --------------------------------------------------------------------------
 
 ;DFS 
 (defun DFS (TREE)
-
+    (cond 
+        ((null TREE) nil)
+        ((atom TREE) (list TREE))
+        (t (append (DFS (rest TREE)) (DFS (first TREE))))
+    )
 )
 
 (print (DFS '((x y)(z a))))
 (print (DFS '((a (b)) c (d))))
 
-;DFID (Allowed multiple functions)
-(defun DFID (TREE DEPTH))
+; ----------------------------------------------------------------------------
 
+(defun DFID-L (TREE DEPTH))
+
+;DFID (Allowed multiple functions)
+(defun DFID (TREE DEPTH)
+    (cond 
+        ((= DEPTH 0) TREE)
+        (t (append (DFID-L TREE (- DEPTH 1)) (DFID-L TREE DEPTH)))
+    )
+)
 
 ; ------------------------------------------------------------------------------
 
