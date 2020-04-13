@@ -27,27 +27,39 @@
 
 ;DFS 
 (defun DFS (TREE)
-    (cond 
+    (cond
         ((null TREE) nil)
         ((atom TREE) (list TREE))
         (t (append (DFS (rest TREE)) (DFS (first TREE))))
     )
 )
 
+(TERPRI)
 (print (DFS '((x y)(z a))))
 (print (DFS '((a (b)) c (d))))
 
 ; ----------------------------------------------------------------------------
 
-(defun DFID-L (TREE DEPTH))
-
-;DFID (Allowed multiple functions)
-(defun DFID (TREE DEPTH)
+(defun DFID-L (TREE DEPTH)
     (cond 
-        ((= DEPTH 0) TREE)
-        (t (append (DFID-L TREE (- DEPTH 1)) (DFID-L TREE DEPTH)))
+        ((null TREE) nil)
+        ((atom TREE) (list TREE))
+        ((= DEPTH 0) nil)
+        (t (append (DFID-L (first TREE) (- DEPTH 1))
+                   (DFID-L (rest TREE) DEPTH)))
     )
 )
+
+;DFID
+(defun DFID (TREE DEPTH)
+    (cond 
+        ((= DEPTH 0) nil)
+        (t (append (DFID TREE (- DEPTH 1)) (DFID-L TREE DEPTH)))
+    )
+)
+
+(TERPRI)
+(print (DFID '((a (b)) c (d)) 3))
 
 ; ------------------------------------------------------------------------------
 
