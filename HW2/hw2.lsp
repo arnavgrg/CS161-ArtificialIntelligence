@@ -1,14 +1,19 @@
-#| Q1
-    If we think of the input in terms of a queue we get two cases:
-    1. If the head of the queue is an atom, then append it to the list
-        and recurse on the rest.
-    2. If the head of the queue is a list, then we want to expand the 
-        internal node and append the children to the end of the queue. 
-        Then, recurse on this modified list.
-    Test Cases:
-        (BFS '((x y)(z a)))) -> (X Y Z A)
-        (BFS '((a (b)) c (d)))) -> (C A D B)
-        (BFS '(((1 2) (3 4)) ((5 6) (7 8))))) -> (1 2 3 4 5 6 7 8)
+#| Q1 BFS
+If we think of the input in terms of a queue we get two cases:
+1. If the head of the queue is an atom, then append it to the list
+    and recurse on the rest.
+2. If the head of the queue is a list, then we want to expand the 
+    internal node and append the children to the end of the queue. 
+    Then, recurse on this modified list.
+
+Test Cases:
+    (BFS '()) -> nil
+    (BFS '(a)) -> (A)
+    (BFS '((x y)(z a)))) -> (X Y Z A)
+    (BFS '((a (b)) c (d)))) -> (C A D B)
+    (BFS '(((1 2) (3 4)) ((5 6) (7 8))))) -> (1 2 3 4 5 6 7 8)
+    (BFS '((A (D)) (B (E (F))) (C))) -> (A B C D E F)
+    (BFS '(A (B C) (D) (E (F G)))) -> (A B C D E F G)
 |#
 
 (defun BFS (TREE)
@@ -19,13 +24,27 @@
     )
 )
 
-(print (BFS '((x y)(z a))))
-(print (BFS '((a (b)) c (d))))
-(print (BFS '(((1 2) (3 4)) ((5 6) (7 8)))))
-
 ; --------------------------------------------------------------------------
 
-; Q2: DFS
+#| Q2 DFS
+For right-to-left DFS, we need to make sure we recursive perform DFS on the 
+rest of the list before performing it in on the head of the list. By using this
+approach, right internal nodes are expanded before left internal nodes, and
+right leaf nodes are expanded before left left nodes. This gives us the 
+right-to-left ordering we want. At each step, internal nodes are expanded until
+we hit the leaf nodes (represented as atoms), and we simply keep concatenating
+them and appending them to the list.
+
+Test Cases:
+    (DFS '()) -> nil
+    (DFS '(a)) -> (a)
+    (DFS '((x y)(z a))) -> (A Z Y X)
+    (DFS '((a (b)) c (d))) -> (D C B A)
+    (DFS '(((1 2) (3 4)) ((5 6) (7 8))))) -> (8 7 6 5 4 3 2 1)
+    (DFS '((A (D)) (B (E (F))) (C))) -> (C F E B D A)
+    (DFS '(A (B C) (D) (E (F G)))) -> (G F E D C B A)
+|#
+
 (defun DFS (TREE)
     (cond
         ((null TREE) nil)
@@ -34,12 +53,29 @@
     )
 )
 
-(TERPRI)
-(print (DFS '((x y)(z a))))
-(print (DFS '((a (b)) c (d))))
-
 ; ----------------------------------------------------------------------------
 
+#| Q3 DFID
+For DFID, the basic logic flow is that we keep calling a helper function to 
+return the depth first tree till height 'depth' and append it to the end of
+the list in order from lowest depth on the left and highest on the right. The 
+list is built in a recursive fashion, by calling DFID on itself for each 
+depth-1 level, and calling DFID-D, the helper function, on the depth level and 
+appending the results into one list. DFID-D itself does a very trivial 
+left-to-right DFS, which can be thought of as essentially returning the nodes 
+in the order that they are seen in the list. At each level, one level of brackets
+is traversed (the internal node is expanded), but the order is maintained.
+
+Test Cases:
+    (DFID '((a (b)) c (d)) 0) -> nil
+    (DFID '(3) 1)) -> (3)
+    (DFID '((a (b)) c (d)) 3) -> (C A C D A B C D)
+    (DFID '(((1 2) (3 4)) ((5 6) (7 8))) 3) -> (1 2 3 4 5 6 7 8)
+    (DFID '((A (D)) (B (E (F))) (C)) 3) -> (A B C A D B E C)
+    (DFID '(A (B C) (D) (E (F G))) 3) -> (A A B C D E A B C D E F G)
+|#
+
+; Helper for DFID
 (defun DFID-D (TREE DEPTH)
     (cond 
         ((null TREE) nil)
@@ -50,7 +86,7 @@
     )
 )
 
-; Q3 - DFID
+; Main entry point for DFID
 (defun DFID (TREE DEPTH)
     (cond 
         ((= DEPTH 0) nil)
@@ -58,10 +94,9 @@
     )
 )
 
-(TERPRI)
-(print (DFID '((a (b)) c (d)) 3))
-
 ; ------------------------------------------------------------------------------
+
+#| Q4 missionary-cannibal |#
 
 ; These functions implement a depth-first solver for the missionary-cannibal
 ; problem. In this problem, three missionaries and three cannibals are trying to
@@ -154,7 +189,8 @@
               (next-state s 1 1)
               (next-state s 2 0)
               (next-state s 0 2)
-           ))
+           )
+        )
     )
 )
 
@@ -219,8 +255,7 @@
 ; (succ-fn '(3 3 t)) -> ((0 1 NIL) (1 1 NIL) (0 2 NIL))
 ; (succ-fn '(1 1 t)) -> ((3 2 NIL) (3 3 NIL))
 
-(TERPRI)
-(print (mc-dfs '(3 3 t) nil))
-(print (mc-dfs '(0 3 nil) '((3 3 T) (1 1 NIL) (3 2 T))))
-(print (mc-dfs '(1 3 nil) nil))
-(print (mc-dfs '(0 0 NIL) NIL))
+;; (print (mc-dfs '(3 3 t) nil))
+;; (print (mc-dfs '(0 3 nil) '((3 3 T) (1 1 NIL) (3 2 T))))
+;; (print (mc-dfs '(1 3 nil) nil))
+;; (print (mc-dfs '(0 0 nil) nil))
