@@ -128,9 +128,9 @@
                      (new_cannibals (- 3 rem_cannibals)))
                     (cond
                         ((and
-                            (or (> rem_cannibals rem_missionaries) (> new_cannibals new_missionaries))
-                            (not (or (= rem_missionaries 0) (= new_missionaries 0)))
-                         ) nil)
+                              (or (> rem_cannibals rem_missionaries) (> new_cannibals new_missionaries))
+                              (not (or (= rem_missionaries 0) (= new_missionaries 0)))
+                          ) nil)
                         (t (list (list new_missionaries new_cannibals (not state))))
                     )
                  )
@@ -144,12 +144,17 @@
 ; returns a list of each state that can be reached by applying legal operators
 ; to the current state.
 (defun succ-fn (s)
-    (append
-        (next-state s 1 0)
-        (next-state s 0 1)
-        (next-state s 1 1)
-        (next-state s 2 0)
-        (next-state s 0 2)
+    (cond 
+        ((equal s '(0 0 t)) nil)
+        ((equal s '(0 0 nil)) nil)
+        (t (append
+              ; Ordering based on results seen from sample function outputs below
+              (next-state s 1 0)
+              (next-state s 0 1)
+              (next-state s 1 1)
+              (next-state s 2 0)
+              (next-state s 0 2)
+           ))
     )
 )
 
@@ -173,17 +178,32 @@
 ; complete path from the initial state to the goal state. Otherwise, it returns
 ; NIL. 
 ; Note that the path should be ordered as: (S_n ... S_2 S_1 S_0)
-(defun mult-dfs (states path))
+(defun mult-dfs (states path)
+    (cond 
+        ((null states) nil)
+        ((equal (final-state (car states)) t) (append path (list (car states))))
+        ((on-path (car states) path) (mult-dfs (cdr states) path))
+        (t (or (mc-dfs (car states) path) 
+               (mult-dfs (cdr states) path))
+        )
+    )
+)
 
 ; MC-DFS does a depth first search from a given state to the goal state. It
-; takes two arguments: a state (S) and the path from the initial state to S
+; takes two arguments: a state (S) and the path from the initial state S to
 ; (PATH). If S is the initial state in our search, PATH should be NIL. MC-DFS
 ; performs a depth-first search starting at the given state. It returns the path
 ; from the initial state to the goal state, if any, or NIL otherwise. MC-DFS is
 ; responsible for checking if S is already the goal state, as well as for
 ; ensuring that the depth-first search does not revisit a node already on the
 ; search path.
-(defun mc-dfs (s path))
+(defun mc-dfs (s path)
+    (cond
+        ((on-path s path) nil)
+        ((equal (final-state s) t) path)
+        (t (mult-dfs (succ-fn s) (append path (list s))))
+    )
+)
 
 ; Function execution examples
 
@@ -202,7 +222,4 @@
 ; (succ-fn '(1 1 t)) -> ((3 2 NIL) (3 3 NIL))
 
 (TERPRI)
-(print (next-state '(3 3 t) 0 1))
-(print (succ-fn '(3 3 t)))
-(print (succ-fn '(1 1 t)))
 (print (mc-dfs '(3 3 t) nil))
