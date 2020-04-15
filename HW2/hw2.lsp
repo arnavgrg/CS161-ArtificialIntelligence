@@ -181,8 +181,6 @@
 (defun mult-dfs (states path)
     (cond 
         ((null states) nil)
-        ((equal (final-state (car states)) t) (append path (list (car states))))
-        ((on-path (car states) path) (mult-dfs (cdr states) path))
         (t (or (mc-dfs (car states) path) 
                (mult-dfs (cdr states) path))
         )
@@ -200,8 +198,8 @@
 (defun mc-dfs (s path)
     (cond
         ((on-path s path) nil)
-        ((equal (final-state s) t) path)
-        (t (mult-dfs (succ-fn s) (append path (list s))))
+        ((equal (final-state s) t) (append (list s) path))
+        (t (mult-dfs (succ-fn s) (append (list s) path)))
     )
 )
 
@@ -223,3 +221,6 @@
 
 (TERPRI)
 (print (mc-dfs '(3 3 t) nil))
+(print (mc-dfs '(0 3 nil) '((3 3 T) (1 1 NIL) (3 2 T))))
+(print (mc-dfs '(1 3 nil) nil))
+(print (mc-dfs '(0 0 NIL) NIL))
