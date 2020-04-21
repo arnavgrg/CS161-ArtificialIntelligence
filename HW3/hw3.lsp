@@ -172,6 +172,41 @@
 	)
 )
 
+; Returns the value at (r,c) in state s. It does this by first removing 
+; the first r rows from s, and then removing the first c columns from the
+; the first row of what remains. Then we simply extract the head of the 
+; remaining list.
+; Want to check and return the value of a wall if:
+;	1. rows/columns is less than 0
+;	2. If (r,c) does not exist in s. nthcdr returns nil if it does not 
+;      my (r,c) extraction does not exist.
+(defun get-square (s r c)
+	(cond
+		((or (< r 0) (< c 0)) 1)
+		((not (nthcdr c (first (nthcdr r s)))) 1)
+		(t (first (nthcdr c (first (nthcdr r s)))))
+	)
+)
+
+; Sets the value at (r,c) in state s to v. It does this by essentially 
+; by creating a new row with value v, and then appending it to the first 
+; r-1 rows and c-1 columns. Then, we append the remaining rows and columns 
+; to the first result.
+(defun set-square (s r c v)
+	(let ((row (first (nthcdr r s))))
+		 (append 
+			(butlast s (- (length s) r))
+			(list (append 
+					  (butlast row (- (length row) c))
+					  (cons v '())
+					  (nthcdr (+ c 1) row)
+				  )
+			)
+			(nthcdr (+ r 1) s)
+		)
+	)
+)
+
 ; EXERCISE: Modify this function to return the list of 
 ; sucessor states of s.
 ;
@@ -212,10 +247,10 @@
 ; Logic: Recursively count the number of boxes (represented by 2) in each row
 ;        and return the sum.
 ; Is this an admissable heuristic? Yes
-; - The number of misplaced boxes is ATLEAST equal to the number of steps we 
-;	would need to move all the boxes on top of a goal. The actual cost is equal
-;	to this in the best case, or would be even greater. Therefore, this heuristic
-;	does not overestimate the actual cost of reaching the goal state.
+; - The number of misplaced boxes is ATLEAST equal to the number of steps 
+;	we would need to move all the boxes on top of a goal. The actual cost is 
+;	equal to this in the best case, or would be even greater. Therefore, 
+;	this heuristic does not overestimate the actual cost of reaching the goal state.
 (defun h1 (s)
 	(cond
 		((null s) 0)
