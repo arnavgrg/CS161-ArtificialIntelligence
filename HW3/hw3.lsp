@@ -41,8 +41,7 @@
 ; I found this easier than typing (load "filename") every time. 
 ;
 (defun reload()
-  (load "hw3.lsp")
-  )
+  (load "hw3.lsp"))
 
 ;
 ; For loading a-star.lsp.
@@ -55,8 +54,7 @@
 ;
 (defun reload-all()
   (reload)
-  (load-a-star)
-  )
+  (load-a-star))
 
 ;
 ; A shortcut function.
@@ -65,8 +63,7 @@
 ; 
 ;
 (defun sokoban (s h)
-  (a* s #'goal-test #'next-states h)
-  )
+  (a* s #'goal-test #'next-states h))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; end general utility functions
@@ -87,32 +84,25 @@
 
 ; Some helper functions for checking the content of a square
 (defun isBlank (v)
-  (= v blank)
-  )
+  (= v blank))
 
 (defun isWall (v)
-  (= v wall)
-  )
+  (= v wall))
 
 (defun isBox (v)
-  (= v box)
-  )
+  (= v box))
 
 (defun isKeeper (v)
-  (= v keeper)
-  )
+  (= v keeper))
 
 (defun isStar (v)
-  (= v star)
-  )
+  (= v star))
 
 (defun isBoxStar (v)
-  (= v boxstar)
-  )
+  (= v boxstar))
 
 (defun isKeeperStar (v)
-  (= v keeperstar)
-  )
+  (= v keeperstar))
 
 ;
 ; Helper function of getKeeperPosition
@@ -168,17 +158,19 @@
 	);end cond
   );end 
 
-; EXERCISE: Modify this function to return true (t)
-; if and only if s is a goal state of the game.
-; (neither any boxes nor the keeper is on a non-goal square)
-;
-; Currently, it always returns NIL. If A* is called with
-; this function as the goal testing function, A* will never
-; terminate until the whole search space is exhausted.
-;
+; Logic: For a game to be complete, there must be no more
+; boxes or keepers who are not on a goal. Therefore, for 
+; the game to end and be a goal state, there must be no 2's 
+; (box) or 3's (keeper) on any of the rows in the state.
 (defun goal-test (s)
-  nil
-  );end defun
+	(cond 
+		((null s) t)
+		((and (equal (count 2 (car s)) 0)
+			  (equal (count 3 (car s)) 0)) 
+			  (goal-test (cdr s)))
+		(t '())
+	)
+)
 
 ; EXERCISE: Modify this function to return the list of 
 ; sucessor states of s.
@@ -210,17 +202,26 @@
    );end let
   );
 
-; EXERCISE: Modify this function to compute the trivial 
-; admissible heuristic.
-;
+; Logic: Return 0 as trivial heuristic.
+; f(n) = g(n) + h(n) ==> f(n) = g(n) so this is admissable.
 (defun h0 (s)
-  )
+  '0
+)
 
-; EXERCISE: Modify this function to compute the 
-; number of misplaced boxes in s.
-;
+; This heuristic calculates the number of misplaced boxes for a given state
+; Logic: Recursively count the number of boxes (represented by 2) in each row
+;        and return the sum.
+; Is this an admissable heuristic? Yes
+; - The number of misplaced boxes is ATLEAST equal to the number of steps we 
+;	would need to move all the boxes on top of a goal. The actual cost is equal
+;	to this in the best case, or would be even greater. Therefore, this heuristic
+;	does not overestimate the actual cost of reaching the goal state.
 (defun h1 (s)
-  )
+	(cond
+		((null s) 0)
+		((+ (count 2 (car s)) (h1 (cdr s))))
+	)
+)
 
 ; EXERCISE: Change the name of this function to h<UID> where
 ; <UID> is your actual student ID number. Then, modify this 
@@ -231,7 +232,7 @@
 ; The Lisp 'time' function can be used to measure the 
 ; running time of a function call.
 ;
-(defun hUID (s)
+(defun h304911796 (s)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
