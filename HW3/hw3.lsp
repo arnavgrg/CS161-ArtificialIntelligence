@@ -208,6 +208,12 @@
 )
 
 ; Returns a valid state if move is possible, otherwise returns nil
+; The basic idea behind this function is that we check if move d can be performed from 
+; state s. If its a blank we can move to that position, if it's a wall then we can't 
+; move so we return nil. If it's a box, then we need to check the subsequent space to
+; see if the box has the ability to move in the desired direction of movement. It can 
+; move if the subsequent space is a blank or goal, but cannot move if its another box 
+; or wall. 
 (defun try-move (s d)
 	(let* 
 		   ((currentPos (getKeeperPosition s 0))
@@ -293,17 +299,100 @@
 	)
 )
 
-; EXERCISE: Change the name of this function to h<UID> where
-; <UID> is your actual student ID number. Then, modify this 
-; function to compute an admissible heuristic value of s. 
-; 
-; This function will be entered in the competition.
-; Objective: make A* solve problems as fast as possible.
-; The Lisp 'time' function can be used to measure the 
-; running time of a function call.
-;
+; Get coordinates/position of all goals. Recursively visits all elements, and 
+; if it is a star (goal), then it adds the coordinates in (c, r) manner to the list
+(defun getGoalCoords (s r c)
+	(cond 
+		((null s) nil)
+		((atom s) 
+			(cond
+				((isStar s) (list (list (- c 1) r)))
+				(t 'nil)
+			)
+		)
+		(t 
+			(cond
+				((= c 0) (append (getGoalCoords (car s) r (+ c 1)) (getGoalCoords (cdr s) (+ r 1) c)))
+				(t (append (getGoalCoords (car s) r c) (getGoalCoords (cdr s) r (+ c 1))))
+			)
+		)
+	)
+)
+
+; Get coordinates/position of all goals. Recursively visits all elements, and 
+; if it is a box, it adds the coordinates in (c, r) manner to the list.
+(defun getBoxCoords (s r c)
+	(cond 
+		((null s) nil)
+		((atom s) 
+			(cond
+				((isBox s) (list (list (- c 1) r)))
+				(t 'nil)
+			)
+		)
+		(t 
+			(cond
+				((= c 0) (append (getBoxCoords (car s) r (+ c 1)) (getBoxCoords (cdr s) (+ r 1) c)))
+				(t (append (getBoxCoords (car s) r c) (getBoxCoords (cdr s) r (+ c 1))))
+			)
+		)
+	)
+)
+
+; Get coordinates for keeper and boxes
+(defun getBoxAndKeeperCoords (s r c)
+	(append (list (getKeeperPosition s 0)) (getBoxCoords s 0 0))
+)
+
+; Helper method to calculate absolute value
+(defun absVal (x)
+	(cond 
+		((>= x 0) x)
+		(t (- x))
+	)
+)
+
+; Function to calculate manhattan distance, which is | x2 - x1 | + | y2 - y1 |
+(defun manhattanDist (coords)
+	(+ (absVal (- (first coords) (third coords))) (absVal (- (second coords) (fourth coords))))
+)
+
+; Calculates distance from box to each goal and return the minimum manhattandistance
+(defun distanceBoxToGoals (box goals)
+    (cond 
+		((= (length goals) 1) (manhattanDist (append box (append (first goals) (second goals)))))
+		((<= (manhattanDist (append box (first goals))) (distanceBoxToGoals box (rest goals))) 
+				(manhattanDist (append box (first goals))))
+		(t (distanceBoxToGoals box (rest goals)))
+    )
+)
+
+; Add distances from each box and the keeper to the closest goal.
+(defun addDistances (boxes goals)
+    (cond 
+		((= (length boxes) 0) 0)
+        ((= (length boxes) 1) (distanceBoxToGoals (append (car boxes) (cdr boxes)) goals))
+        (t (+ (distanceBoxToGoals (car boxes) goals) (addDistances (cdr boxes) goals)))
+    )
+)
+
+; Custom heuristic function: We find the sum of the minimum manhattan distances between
+; all keeper/boxes and the nearest goal to it. The reason I chose manhattan distance over
+; euclidean distance is because it is always >= euclidean distance, thereby generating 
+; a much larger h(n). However, in the best case, the actual distance >= h(n), so this 
+; does not overestimate and it is an admissable heuristic.
 (defun h304911796 (s)
-  )
+	(cond 
+		((null s) 0)
+		(t (let ((boxes (getBoxAndKeeperCoords s 0 0))
+			     (goals (getGoalCoords s 0 0)))
+			(cond
+				((or (null boxes) (null goals)) 0)
+				(t (addDistances boxes goals))
+			)
+		))
+    )
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -541,5 +630,3 @@
     (sleep delay)
     );end dolist
   );end defun
-
-;; (load-a-star)
