@@ -182,6 +182,7 @@
 ;      my (r,c) extraction does not exist.
 (defun get-square (s r c)
 	(cond
+		; Left and top edges of the board
 		((or (< r 0) (< c 0)) 1)
 		((not (nthcdr c (first (nthcdr r s)))) 1)
 		(t (first (nthcdr c (first (nthcdr r s)))))
@@ -190,8 +191,7 @@
 
 ; Sets the value at (r,c) in state s to v. It does this by essentially 
 ; by creating a new row with value v, and then appending it to the first 
-; r-1 rows and c-1 columns. Then, we append the remaining rows and columns 
-; to the first result.
+; r-1 rows. Then, we append the remaining rows to the first result.
 (defun set-square (s r c v)
 	(let ((row (first (nthcdr r s))))
 		 (append 
@@ -203,39 +203,74 @@
 				  )
 			)
 			(nthcdr (+ r 1) s)
+		 )
+	)
+)
+
+; Returns a valid state if move is possible, otherwise returns nil
+(defun try-move (s d)
+	(let* 
+		   ((currentPos (getKeeperPosition s 0))
+			(col (car currentPos))
+			(row (cadr currentPos))
+			(currLoc (cond 
+					((= (get-square s row col) 3) 0)
+					(t '4)))
+			; single - one step
+			(single_col (cond 
+					((= d 0) (- col 1)) 
+					((= d 1) (+ col 1)) 
+					(t col)))
+			(single_row (cond 
+					((= d 2) (- row 1)) 
+					((= d 3) (+ row 1)) 
+					(t row)))
+			; double - two steps
+			(double_col (cond 
+					((= d 0) (- col 2)) 
+					((= d 1) (+ col 2)) 
+					(t col)))
+			(double_row (cond 
+					((= d 2) (- row 2)) 
+					((= d 3) (+ row 2)) 
+					(t row)))
+			(single_step_loc (get-square s single_row single_col))
+			(double_step_loc (get-square s double_row double_col))
+		)
+		(cond
+			; Set new position to 3 to indicate keeper movement, and set current pos to 0 to indicate blank
+			((isBlank single_step_loc) (set-square (set-square s single_row single_col keeper) row col currLoc))
+			; Next step is a wall, so we return nil since we can't move
+			((isWall single_step_loc) nil)
+			; If the next step is a box, then we must address 2 cases: Is the empty space following the box
+			; in the same direction a blank, goal, or wall?
+			((isBox single_step_loc)
+				(cond
+					;If blank, move box to this location and keeper to the box's location.
+					((isBlank double_step_loc) (set-square (set-square (set-square s single_row single_col keeper) row col currLoc) double_row double_col box)) 
+					;If goal, repeat change of numberings accordingly.
+					((isStar double_step_loc) (set-square (set-square (set-square s single_row single_col keeper) row col currLoc) double_row double_col boxstar))
+					; Likely to be another wall or box, so we just return nil
+					(t nil)
+				))
+			; Set new position to indicate keeper on goal state
+			((isStar single_step_loc) (set-square (set-square s single_row single_col keeperstar) row col currLoc))
+			(t 
+				(cond
+					((isBlank double_step_loc) (set-square (set-square (set-square s single_row single_col keeperstar) row col currLoc) double_row double_col box)) 
+					((isStar double_step_loc) (set-square (set-square (set-square s single_row single_col keeperstar) row col currLoc) double_row double_col boxstar))
+					(t nil)
+				)
+			)
 		)
 	)
 )
 
-; EXERCISE: Modify this function to return the list of 
-; sucessor states of s.
-;
-; This is the top-level next-states (successor) function.
-; Some skeleton code is provided below.
-; You may delete them totally, depending on your approach.
-; 
-; If you want to use it, you will need to set 'result' to be 
-; the set of states after moving the keeper in each of the 4 directions.
-; A pseudo-code for this is:
-; 
-; ...
-; (result (list (try-move s UP) (try-move s DOWN) (try-move s LEFT) (try-move s RIGHT)))
-; ...
-; 
-; You will need to define the function try-move and decide how to represent UP,DOWN,LEFT,RIGHT.
-; Any NIL result returned from try-move can be removed by cleanUpList.
-; 
-;
+; This is the successor function. Returns all valid states from the current state.
+; Up, down, left and right are represented by 0, 1, 2 and 3 respectively.
 (defun next-states (s)
-  (let* ((pos (getKeeperPosition s 0))
-	 (x (car pos))
-	 (y (cadr pos))
-	 ;x and y are now the coordinate of the keeper in s.
-	 (result nil)
-	 )
-    (cleanUpList result);end
-   );end let
-  );
+	(cleanUpList (list (try-move s 0) (try-move s 1) (try-move s 2) (try-move s 3)))
+)
 
 ; Logic: Return 0 as trivial heuristic.
 ; f(n) = g(n) + h(n) ==> f(n) = g(n) so this is admissable.
@@ -506,3 +541,5 @@
     (sleep delay)
     );end dolist
   );end defun
+
+;; (load-a-star)
