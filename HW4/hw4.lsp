@@ -6,44 +6,53 @@
 ; list of assigned variables, and adds a new variable assignment (the 
 ; next variable that has not been assigned) based on the selected sign.
 ; -1 represents false, and 1 represents true
-; E.g. (assignVariable -1 (1 -2 3)) -> (1 -2 3 -4)
-(defun assignVariable (sign assignments)
-    (let ((next_num (+ (length assignments) 1)))
+; E.g. (assignVariable -1 (23 -24 25)) -> (-22 23 24 25)
+(defun assignVariable (n sign assignments)
+    (let ((next_num (- n (length assignments))))
           (cond 
-              ((not sign) (append assignments (list (- next_num))))
-              (t (append assignments (list next_num)))
+              ((not sign) (append (list (- next_num)) assignments))
+              (t (append (list next_num) assignments))
           )
+    )
+)
+
+(defun checkVariable (var assignments)
+    (cond 
+        ((= (length assignments) 0) t)
+        ((= var (- (car assignments))) nil)
+        ((= var (car assignments)) t)
+        (t (checkVariable var (cdr assignments)))
     )
 )
 
 (defun checkValidClause (clause assignments)
     (cond 
-        ((null clause) nil)
-        (t 
-            (cond 
-
-            )
-        )
+        ((= (length clause) 0) nil)
+        ; Atleast 1 should be true for entire clause to be true
+        (t (or (checkVariable (first clause) assignments)
+               (checkValidClause (rest clause) assignments)))
     )
 )
 
 (defun checkCurrentAssignments (delta assignments)
-    (cond 
-        ((= (length delta) 0) t)
-        (t (and (clauseIsValid? (car delta) assignments)
-                (checkCurrentAssignments (cdr delta) assignments)))
+    (if (not (= (length delta) 0)) 
+        (and (checkValidClause (car delta) assignments)
+              (checkCurrentAssignments (cdr delta) assignments)
+        ) ;t
+        t ;f
     )
 )
 
-; Backtracking with tail recursion
+; This function uses a greedy depth-first search to find a valid solution to
+; the 3-sat problem.
 (defun backtrack (n delta assignments)
     ; Check if current assignment is still valid. If not, try a different value
     ; for the same variable. Don't recurse further down this branch.
     (if (checkCurrentAssignments delta assignments)
         (cond
             ((equal (length assignments) n) assignments)
-            (t  (let ((positiveAssignment (assignVariable t assignments))
-                      (negativeAssignment (assignVariable nil assignments)))
+            (t  (let ((positiveAssignment (assignVariable n t assignments))
+                      (negativeAssignment (assignVariable n nil assignments)))
                     (or (backtrack n delta positiveAssignment)
                         (backtrack n delta negativeAssignment))
                 )
@@ -71,7 +80,6 @@
 ; Usage (solve-cnf <path-to-file>)
 ; e.g., (solve-cnf "./cnfs/f1/sat_f1.cnf")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (defun split-line (line)
   (if (equal line :eof)
