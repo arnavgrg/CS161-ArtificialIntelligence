@@ -2,12 +2,12 @@
 ; Homework 4 ;
 ;;;;;;;;;;;;;;
 
-; This function takes a sign (which is either a -1 or 1) and the current 
+; This function takes a boolean (either t or nil) and the current 
 ; list of assigned variables, and adds a new variable assignment (the 
 ; next variable that has not been assigned) based on the selected sign.
 ; This adds values for variables in the reverse order, that is, from n to 1.
-; -1 represents false, and 1 represents true
-; E.g. (assignVariable -1 (23 -24 25)) -> (-22 23 24 25)
+; E.g. (assignVariable nil (23 -24 25)) -> (-22 23 24 25)
+; E.g. (assignVariable t (23 -24 25)) -> (22 23 -24 25)
 (defun assignVariable (n sign assignments)
     (let ((next_num (- n (length assignments))))
           (cond 
